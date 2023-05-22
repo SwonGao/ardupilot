@@ -164,6 +164,9 @@ void Sub::handle_jsbutton_press(uint8_t _button, bool shift, bool held)
         arming.disarm(AP_Arming::Method::MAVLINK);
         break;
 
+    case JSButton::button_function_t::k_mode_swonmode:
+        set_mode(SWONMODE, ModeReason::RC_COMMAND);
+        break;
     case JSButton::button_function_t::k_mode_manual:
         set_mode(MANUAL, ModeReason::RC_COMMAND);
         break;

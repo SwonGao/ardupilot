@@ -68,6 +68,9 @@
 #include <AP_TemperatureSensor/TSYS01.h>
 #include <AP_Proximity/AP_Proximity.h>
 
+#include <AC_biquad/BiQuad.h>
+
+
 // Local modules
 #include "defines.h"
 #include "config.h"
@@ -501,12 +504,17 @@ private:
     bool poshold_init(void);
     void poshold_run();
 
+    bool swonmode_init(void);
+    void swonmode_run();
+
     bool motordetect_init();
     void motordetect_run();
 
     bool stabilize_init(void);
     void stabilize_run();
     void control_depth();
+    void swon_control_depth();
+
     bool manual_init(void);
     void manual_run();
     void failsafe_sensors_check(void);

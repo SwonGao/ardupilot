@@ -58,6 +58,10 @@ bool Sub::set_mode(control_mode_t mode, ModeReason reason)
         success = motordetect_init();
         break;
 
+    case SWONMODE:
+        success = swonmode_init();
+        break;
+
     default:
         success = false;
         break;
@@ -148,6 +152,10 @@ void Sub::update_flight_mode()
 
     case MOTOR_DETECT:
         motordetect_run();
+        break;
+
+    case SWONMODE:
+        swonmode_run();
         break;
 
     default:

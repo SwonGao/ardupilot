@@ -102,6 +102,19 @@ void Sub::fast_loop()
     if (control_mode != MANUAL && control_mode != MOTOR_DETECT) {
         // run low level rate controllers that only require IMU data
         attitude_control.rate_controller_run();
+        // _motors.set_roll(get_rate_roll_pid().update_all(_ang_vel_body.x, gyro_latest.x, _motors.limit.roll));
+        // _motors.set_pitch(get_rate_pitch_pid().update_all(_ang_vel_body.y, gyro_latest.y, _motors.limit.pitch));
+        // _motors.set_yaw(get_rate_yaw_pid().update_all(_ang_vel_body.z, gyro_latest.z, _motors.limit.yaw));
+        // float AC_PID::update_all(float target, float measurement, bool limit)
+
+    // motors.set_desired_spool_state(AP_Motors::DesiredSpoolState::THROTTLE_UNLIMITED);
+
+    // motors.set_roll(channel_roll->norm_input());
+    // motors.set_pitch(channel_pitch->norm_input());
+    // motors.set_yaw(channel_yaw->norm_input() * g.acro_yaw_p / ACRO_YAW_P);
+    // motors.set_throttle(channel_throttle->norm_input());
+    // motors.set_forward(channel_forward->norm_input());
+    // motors.set_lateral(channel_lateral->norm_input());
     }
 
     // send outputs to the motors library
