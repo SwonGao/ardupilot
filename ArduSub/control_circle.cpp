@@ -1,11 +1,12 @@
 #include "Sub.h"
 
 
-BiQuad bq1;
-BiQuad bq2;
-BiQuadChain bqc1;
-BiQuadChain bqc2;
+
 float z_d;
+float omega = 10;
+
+BiQuad bq1;
+BiQuadChain bqc1;
 // ==========================  swon_UDE-based althold mode ==========================  
 // ==========================  swon_UDE-based althold mode ==========================  
 
@@ -40,6 +41,9 @@ bool Sub::circle_init()
     }
     last_pilot_heading = ahrs.yaw_sensor;
     last_input_ms = AP_HAL::millis();
+
+    bq1.set( 1.00000e+00 + omega , -1 , 0.00000e+00, -1 , 0 );
+    bqc1.add( &bq1 ); 
     return true;
 }
 
@@ -106,7 +110,13 @@ void Sub::swon_control_depth() {
     float K = 0.1;
     // desired vel and acc equals zero;
     // tau_3 = Z_dw dw_d + D_3 w_d - Z_dw J^-1 K^2 (z - z_d);
-    float tau_3 = 0 * curr_vel_z - 321.44 * K * K * (curr_pos_z - z_d);
+    float tau_ude = (- K * curr_vel_z - K * (curr_pos_z - z_d));
+    tau_ude = bqc1.step(tau_ude); // 1/(1 - Gf(s)) filtering
+    float tau_ff  = - omega * curr_vel_z + 612.02 / 321.44 * curr_vel_z;
+    
+
+    float tau_3 = tau_ude + tau_ff;
+    // float tau_3 = 0 * curr_vel_z - 321.44 * K * K * (curr_pos_z - z_d);
     Vector3f throttle_vehicle_frame = ahrs.get_rotation_body_to_ned().transposed() * Vector3f(0, 0, tau_3);
     //TODO: scale throttle with the ammount of thrusters in the given direction
     float raw_throttle_factor = (ahrs.get_rotation_body_to_ned() * Vector3f(0, 0, 1.0)).xy().length();
@@ -114,3 +124,4 @@ void Sub::swon_control_depth() {
     motors.set_forward(-throttle_vehicle_frame.x + channel_forward->norm_input());
     motors.set_lateral(-throttle_vehicle_frame.y + channel_lateral->norm_input());
 }
+
